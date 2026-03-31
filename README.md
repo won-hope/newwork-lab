@@ -1,123 +1,81 @@
-# 🌐 Network Study Roadmap
+# 🌐 Network Deep Dive Roadmap for Backend Engineers
 
-> 네트워크를 밑바닥부터 배우기 위한 5단계 로드맵  
-> 실습 중심으로 기초부터 실무까지 단계별로 정리했습니다.
+> 단순한 패킷 전달을 넘어, 대규모 분산 시스템과 모바일 클라이언트 환경에서
+> 네트워크 인프라가 백엔드 애플리케이션 성능에 미치는 영향을 밑바닥부터 파고드는 로드맵입니다.
 
----
-
-## 🧱 1️⃣ 네트워크 기초 이해 (OSI 7계층 중심)
-
-**🎯 목표:** 네트워크 구조의 큰 틀과 기본 개념 이해
+## 🧱 1️⃣ 네트워크 기초와 추상화의 층위 (OSI 7계층)
+**🎯 목표:** 네트워크 구조의 큰 틀을 이해하고, 각 계층의 캡슐화/역캡슐화 비용 인지하기
 
 ### 📚 학습 포인트
-- 네트워크란 무엇인가? IP의 역할은?
-- **OSI 7계층** (물리 → 응용 계층) 역할 정리
-- LAN / WAN / 인터넷 구조
-- 패킷, 프레임, 프로토콜 개념
-- IP 주소, MAC 주소, 포트 번호 기초
-
-### 🧩 학습 방법
-- 교재: _그림으로 배우는 네트워크 원리_
-- 유튜브: 생활코딩 네트워크편 / Computer Networking Crash Course
-- 연습: OSI 7계층 도식화 + 각 계층 프로토콜 연결
+- **OSI 7계층 vs TCP/IP 4계층:** 왜 현대는 TCP/IP 모델을 실질적 표준으로 사용하는가?
+- 패킷, 프레임, 세그먼트, 데이터그램의 차이와 페이로드(Payload) 구조.
+- IP 주소(논리)와 MAC 주소(물리)의 매핑 원리 (ARP).
+- **Deep Dive (Why):** 응용 계층의 데이터가 물리 계층으로 내려가며 붙는 헤더 오버헤드는 얼마나 되는가? 이것이 시스템 처리량에 미치는 영향은?
 
 ---
 
-## ⚙️ 2️⃣ IP, 서브넷, 라우팅 기본기
-
-**🎯 목표:** IP 구조 및 네트워크 분할 개념 습득
+## ⚙️ 2️⃣ OS 커널과 네트워크의 만남 (IP & Socket)
+**🎯 목표:** IP 라우팅의 기초를 다지고, 애플리케이션과 OS 네트워크 스택의 경계 허물기
 
 ### 📚 학습 포인트
-- IPv4 구조 (Network / Host bit)
-- 서브넷 마스크, CIDR 계산
-- 게이트웨이 / NAT / DNS 동작 원리
-- 라우팅: 정적 vs 동적
-- ping / traceroute / nslookup 명령어
+- IPv4/IPv6 구조와 CIDR(서브넷 마스크) 계산.
+- 정적/동적 라우팅 및 NAT, 방화벽의 기본 원리.
+- **Socket Programming:** 커널 공간(Kernel Space)과 사용자 공간(User Space) 간의 네트워크 데이터 복사 비용.
+- **Deep Dive (Why):** 백엔드 스레드가 네트워크 I/O를 대기할 때 OS 레벨에서 벌어지는 일 (Blocking vs Non-blocking, `epoll`, `kqueue`).
 
-### 🧩 학습 방법
-- [Cisco Packet Tracer](https://www.netacad.com/courses/packet-tracer) 설치 후 ping 실습  
-- CIDR 계산 연습 (`192.168.10.0/27` 등)
-- 교재: _Do it! 네트워크 입문_ / _TCP/IP 쉽게, 더 쉽게_
+### 🧩 실습 및 적용
+- AWS VPC, Subnet 직접 구성해 보기.
+- Java/Spring Boot에서 단순 Socket 통신 구현 후, 스레드 덤프(Thread Dump) 분석해 보기.
 
 ---
 
-## 🧩 3️⃣ TCP/IP 심화 및 통신 흐름 분석
-
-**🎯 목표:** 실제 데이터 통신 과정을 패킷 단위로 이해
+## 🧩 3️⃣ TCP/IP 심화와 백엔드 병목 탐색
+**🎯 목표:** 데이터 통신의 신뢰성 보장 메커니즘을 이해하고, 그것이 DB 및 API 성능에 미치는 영향 분석
 
 ### 📚 학습 포인트
-- TCP 3-way handshake / 4-way termination
-- UDP vs TCP 비교
-- 포트 개념, HTTP 통신 구조
-- ARP, ICMP, DHCP, DNS 상세 동작
-- NAT, 방화벽 동작 원리
+- **TCP vs UDP의 본질:** 상태 기반(Stateful) 통신과 무상태(Stateless) 통신의 설계 철학 차이.
+- TCP 3-Way Handshake & 4-Way Termination의 물리적 레이턴시 비용.
+- 혼잡 제어(Congestion Control)와 흐름 제어(Flow Control) 메커니즘.
+- **Deep Dive (Why):** 이 TCP 연결 비용 때문에 왜 DB Connection Pool(HikariCP)을 미리 맺어두어야 하며, HTTP Keep-Alive가 시스템 성능에 필수적인가?
 
-### 🧩 학습 방법
-- Wireshark로 패킷 캡처  
-  → google.com 접속 시 TCP handshake 패킷 확인  
-  → DNS 요청/응답 분석
-- 인프런 「네트워크 올인원 패킷분석」 / KOCW 「컴퓨터 네트워크」
-- 블로그 정리: “TCP 연결이 실제로 만들어지는 과정”
+### 🧩 실습 및 적용
+- Wireshark로 로컬 서버 ↔ DB 간의 Handshake 패킷 캡처 및 RTT(Round Trip Time) 분석.
 
 ---
 
-## 🖥️ 4️⃣ 실무 환경 & 서버 네트워킹
-
-**🎯 목표:** 웹/서버 개발자가 알아야 할 네트워크 실무 감각 습득
+## 🖥️ 4️⃣ 실무 환경 아키텍처와 프로토콜 최적화
+**🎯 목표:** 현대 웹/모바일 서비스에 맞는 네트워크 아키텍처 설계와 프로토콜 트레이드오프 분석
 
 ### 📚 학습 포인트
-- IP 할당, 라우터 설정, 포트포워딩
-- 로드밸런싱, 프록시, 리버스 프록시
-- DNS 레코드 (A, CNAME, MX, TXT)
-- 클라우드 네트워크 (AWS VPC, Subnet, Security Group)
-- HTTPS, SSL 인증서 구조
+- L4 / L7 로드밸런싱의 차이점과 리버스 프록시(Nginx) 동작 원리.
+- DNS 동작 과정과 레코드 타입(A, CNAME 등) 심화 분석.
+- HTTPS와 TLS/SSL Handshake 과정에서의 암호화 연산 오버헤드.
+- **Deep Dive (Why):** 지하철에서 IP가 바뀌거나 네트워크가 끊기는 모바일(App) 환경에서 TCP 연결은 어떻게 무너지는가? 이를 극복하기 위한 HTTP/3(QUIC)의 Connection Migration 원리는 무엇인가?
 
-### 🧩 학습 방법
-- AWS Free Tier로 VPC/Subnet 구성 실습
-- Nginx Reverse Proxy 설정 (Node.js 3000 → 80포트)
-- 교재: _그림으로 배우는 클라우드 네트워크_
+### 🧩 실습 및 적용
+- Nginx로 리버스 프록시 구성 후 백엔드 서버 다중화 및 부하 분산 테스트.
+- Project OHANA 등 실제 모바일-백엔드 연동 환경에서 네트워크 단절/지연 시나리오 구축 및 복구 테스트.
 
 ---
 
-## 🧠 5️⃣ 심화 & 문제 해결 중심 학습
-
-**🎯 목표:** 네트워크 장애 대응 능력 및 면접 대비
+## 🧠 5️⃣ 장애 대응 및 대규모 시스템 아키텍처 (Staff Level)
+**🎯 목표:** 시스템 장애 시 네트워크 계층부터 애플리케이션까지 Top-Down / Bottom-Up 디버깅 역량 확보
 
 ### 📚 학습 포인트
-- 패킷 손실, 지연, NAT loopback, MTU 이슈
-- 네트워크 보안 (TLS handshake, Firewall rule)
-- VPN, VLAN, SDN 개념
-- HTTP/2, QUIC, CDN 동작 원리
-
-### 🧩 학습 방법
-- 장애 시뮬레이션: ping 안될 때 ARP → Routing → DNS → Firewall 순서 점검
-- 면접 대비 질문 정리
-  - TCP와 UDP의 차이점은?
-  - 3-way handshake를 왜 하는가?
-- 교재: _TCP/IP Illustrated_ (심화서)
+- 패킷 손실, 네트워크 지연, MTU(Maximum Transmission Unit) 불일치로 인한 원인 불명의 장애 해결법.
+- 대규모 트래픽 시 발생하는 TIME_WAIT 소켓 고갈 문제와 OS 커널 파라미터 튜닝(`sysctl`).
+- CDN의 엣지 캐싱(Edge Caching) 원리와 글로벌 트래픽 분산 전략.
+- **Troubleshooting:** 장애 시뮬레이션 논리적 접근법 (ping → DNS → 라우팅 → 방화벽 → 애플리케이션 로그 순차 점검).
 
 ---
 
-## 🗂️ 정리된 학습 순서
-
-| 단계 | 학습 주제 | 실습 도구 | 추천 기간 |
-|------|------------|------------|------------|
-| 1단계 | OSI 7계층, 기본 용어 | 없음 | 1주 |
-| 2단계 | IP/Subnet/DNS | Packet Tracer | 1~2주 |
-| 3단계 | TCP/IP, 패킷분석 | Wireshark | 2~3주 |
-| 4단계 | 서버 네트워킹, AWS | AWS/Nginx | 2주 |
-| 5단계 | 장애대응, 심화 | 문제풀이 | 상시 |
-
----
-
-
-## 🚀 추천 레포 구조 (예시)
+## 🚀 Repository Structure
 
 ```bash
-📦 zero-to-network/
- ┣ 📂 theory/           # 이론 정리
- ┣ 📂 labs/             # 실습 스크린샷, 구성 파일
- ┣ 📂 wireshark/        # 패킷 분석 캡처
- ┣ 📂 aws-vpc/          # 클라우드 네트워크 실습
- ┣ 📄 README.md         # 학습 로드맵
- ┗ 📘 notes.md          # 주차별 공부 기록
+📦 zero-to-network-deepdive/
+ ┣ 📂 01_theory/           # TCP/IP, OSI 계층 등 핵심 개념 마크다운 정리
+ ┣ 📂 02_wireshark/        # 3-Way Handshake, DB Connection 패킷 캡처 및 분석 로그
+ ┣ 📂 03_architecture/     # AWS VPC, Nginx 로드밸런싱 구성도 및 설정 파일
+ ┣ 📂 04_troubleshooting/  # 장애 시뮬레이션 및 트러블슈팅 일지 (TIME_WAIT 고갈 등)
+ ┣ 📄 README.md            # 전체 학습 로드맵 및 진도표
+ ┗ 📘 dev_notes.md         # 주차별 딥다이브 회고록 (Why에 대한 스스로의 답변)
